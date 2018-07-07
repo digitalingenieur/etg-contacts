@@ -38,8 +38,8 @@ class CreateAddressBook extends Command
             [ 
                 'form_params' => [
                     'func'  => 'loginWithToken',
-                    'id'    => '1',
-                    'token' => '123',
+                    'id'    => '39',
+                    'token' => 'DbC4yyioLes1Im7dcTIvdaHPLsZ78GPrq27UagFaIuXUekOgdwjzf1p5WsrGTsaNAi7cw1LkYmy0gDngfYbD1Z7FR5X8l8nC1QxkRXpYPzGNSp0dgjPfKYdFDBnXAumqPb2TvpIMVa3MfkkDOuC5LqFxdBgNTJsmf2szftf491ggUe3xQOdDcdvuNGIg9nIgNoTFxKR9sF6RNXlLev9Y6IQ7mypDEjjZsAJX8KkcBk3GhYqQwdffcsUpxRYDoeBZ',
                     'directtool' => 'cli-tool'
                     ]
             ]);

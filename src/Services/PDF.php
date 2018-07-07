@@ -78,6 +78,7 @@ class PDF
 	
 		$this->pdf->Write(0,$person->vorname);
 
+		//Status 2 = verheiratet
 		if($person->status_id == 2)
 		{
 			$this->pdf->Write(0, "*");
@@ -179,16 +180,34 @@ class PDF
 			}
 		}
 
+		$registry = '';
+		$alphabet = range('A', 'Z');
+		
+		for ($i = 0; $i < count($alphabet); $i++) {
+			$height = ($i * 4.5) + 5;
+			$this->pdf->SetXY(100,$height);
+			if ($alphabet[$i] === substr($person->name, 0, 1)) {
+				$this->pdf->setFillColor(0,0,0,0);
+				$this->pdf->setFont('opensansb',8);
+				$this->pdf->setTextColor(99,70,24,7);
+				$this->pdf->Cell(4,4,$alphabet[$i], 0, false, 'C');
+			} else {
+				$this->pdf->setFillColor(0,0,0,0);
+				$this->pdf->setFont('opensans',6);
+				$this->pdf->setTextColor(0,0,0,30);
+				$this->pdf->Cell(4,4,$alphabet[$i], 0, false, 'C');
+			}
+		}
+
 		$this->pdf->setFillColor(99,70,24,7);
 		$this->pdf->setTextColor(0,0,0,0);
 		$this->pdf->MultiCell($w=111,$h=24,'Stand: ',$border=0,$align='C',$fill='dedede',$ln=1,$x=0,$y=130);
-
 
 	}
 
 	public function output()
 	{
 
-		$this->pdf->Output('/home/vagrant/dev/projects/adressbuch/output/test.pdf', 'F');
+		$this->pdf->Output('e:\etg-contacts\output\test.pdf', 'F');
 	}
 }
