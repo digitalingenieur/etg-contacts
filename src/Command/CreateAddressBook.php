@@ -6,6 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Dotenv\Dotenv;
 use App\Services\Person; 
 use App\Services\Page; 
 use App\Services\PDF; 
@@ -31,15 +32,18 @@ class CreateAddressBook extends Command
     {
         $pdf = new PDF();
 
+        $dotenv = new Dotenv();
+        $dotenv->load(BASEDIR.'/.env');
+        
         $output->writeln("Get All Persons from Churchtools");
 
         $client = new \GuzzleHttp\Client(['cookies'=>true]);
-        $res = $client->request('POST', 'https://etg.church.tools/index.php?q=login/ajax', 
+        $res = $client->request('POST', getenv('CHURCHTOOLS_URL').'/index.php?q=login/ajax', 
             [ 
                 'form_params' => [
                     'func'  => 'loginWithToken',
-                    'id'    => '39',
-                    'token' => 'DbC4yyioLes1Im7dcTIvdaHPLsZ78GPrq27UagFaIuXUekOgdwjzf1p5WsrGTsaNAi7cw1LkYmy0gDngfYbD1Z7FR5X8l8nC1QxkRXpYPzGNSp0dgjPfKYdFDBnXAumqPb2TvpIMVa3MfkkDOuC5LqFxdBgNTJsmf2szftf491ggUe3xQOdDcdvuNGIg9nIgNoTFxKR9sF6RNXlLev9Y6IQ7mypDEjjZsAJX8KkcBk3GhYqQwdffcsUpxRYDoeBZ',
+                    'id'    => getenv('CHURCHTOOLS_USERID'),
+                    'token' => getenv('CHURCHTOOLS_TOKEN'),
                     'directtool' => 'cli-tool'
                     ]
             ]);
@@ -47,7 +51,7 @@ class CreateAddressBook extends Command
             $res->getBody()
         );
 
-        $res = $client->request('POST','https://etg.church.tools/index.php?q=churchdb/ajax',
+        $res = $client->request('POST',getenv('CHURCHTOOLS_URL').'/index.php?q=churchdb/ajax',
             ['form_params' => 
                 [
                     'func'  => 'getAllPersonData'
@@ -90,7 +94,7 @@ class CreateAddressBook extends Command
                 continue;
             }
            
-            $res = $client->request('POST','https://etg.church.tools/index.php?q=churchdb/ajax',
+            $res = $client->request('POST',getenv('CHURCHTOOLS_URL').'/index.php?q=churchdb/ajax',
                 ['form_params' => 
                     [
                    'func'  => 'getPersonDetails',

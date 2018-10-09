@@ -208,6 +208,6 @@ class PDF
 	public function output()
 	{
 
-		$this->pdf->Output('e:\etg-contacts\output\test.pdf', 'F');
+		$this->pdf->Output(BASEDIR.'/output/test.pdf', 'F');
 	}
 }
