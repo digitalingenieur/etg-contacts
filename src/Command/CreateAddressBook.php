@@ -4,6 +4,7 @@ namespace App\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Dotenv\Dotenv;
@@ -22,6 +23,8 @@ class CreateAddressBook extends Command
 
         // the short description shown while running "php bin/console list"
         ->setDescription('Creates the Address Book')
+
+        ->addArgument('slice',InputArgument::OPTIONAL,'How many Entries should be processed')
 
         // the full command description shown when running the command with
         // the "--help" option
@@ -65,6 +68,10 @@ class CreateAddressBook extends Command
         $progressBar = new ProgressBar($output, count((array) $allPersonData));
 
         $objPersons = array();
+
+        if($input->getArgument('slice')){
+            $allPersonData = array_slice((array) $allPersonData,0,$input->getArgument('slice'));    
+        }
         foreach($allPersonData as $person){
 
             $progressBar->advance();
