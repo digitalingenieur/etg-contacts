@@ -88,9 +88,9 @@ class PDF
 		$printPartner = true;
 		if($person->partner)
 		{
-			if($person->email == $person->partner->email &&
-				$person->telefonhandy == $person->partner->telefonhandy &&
-				$person->telefonprivat == $person->partner->telefonprivat)
+			if(($person->email == $person->partner->email || $person->partner->email=='') &&
+				($person->telefonhandy == $person->partner->telefonhandy || $person->partner->telefonhandy=='' ) &&
+				($person->telefonprivat == $person->partner->telefonprivat || $person->partner->telefonprivat==''))
 			{
 				$this->pdf->Write(0,' und '. $person->partner->vorname);
 				if($person->partner->status_id == 2)
@@ -101,19 +101,16 @@ class PDF
 			}
 		}
 
-		$this->pdf->Ln();
+		$this->pdf->Ln(8);
+		
+		
+		$this->writeLnWIcon($person->telefonprivat,'phone');
+		$this->writeLnWIcon($person->telefonhandy,'mobile');	
+		$this->writeLnWIcon($person->email,'email');
+		
+		$this->pdf->Ln(4);
 
-		$this->pdf->setFontSize(11);
-		$this->pdf->setFont('opensans');
-		$this->pdf->Write(5,"Telefon: $person->telefonprivat");
-		$this->pdf->Ln();
-		$this->pdf->Write(5,"Mobil: $person->telefonhandy");
-		$this->pdf->Ln();
-		$this->pdf->Write(5,"E-Mail: $person->email");
-		$this->pdf->Ln(10);
-
-
-
+		
 		if($person->partner && $printPartner){
 			$this->pdf->setFont('opensansb');
 			$this->pdf->setFontSize(14);
@@ -123,37 +120,36 @@ class PDF
 				$this->pdf->Write(0, "*");
 			}
 
-			
 			if($person->partner->name != $person->name)
 			{
 				$this->pdf->Write(0,' '.$person->partner->name);
+				
 			}
+			$this->pdf->Ln(8);
 			
-			$this->pdf->setFontSize(11);
-			$this->pdf->setFont('opensans');
 			if($person->telefonhandy != $person->partner->telefonhandy)
 			{
-				$this->pdf->Ln();
-				$this->pdf->Write(0, $person->partner->telefonhandy);
+				$this->writeLnWIcon($person->partner->telefonhandy,'mobile');
 			}
 			
 			if($person->email != $person->partner->email)
 			{
-				$this->pdf->Ln();
-				$this->pdf->Write(0, $person->partner->email);	
+				$this->writeLnWIcon($person->partner->email,'email');
 			}
 			
 			
-			$this->pdf->Ln(10);
+			$this->pdf->Ln(4);
 		}
-		
+		//$this->pdf->ImageSVG(BASEDIR.'/assets/svg/address-grey.svg', $x=50, $y=$this->pdf->getY()-5, $w=30, $h=35);
 		$this->pdf->setFont('opensansb');
+		$this->pdf->ImageSVG(BASEDIR.'/assets/svg/address.svg', $x=11, $y=$this->pdf->getY(), $w=3, $h=5);
+		$this->pdf->setX(14);
 		$this->pdf->Write(0,'Adresse');
 		$this->pdf->setFont('opensans');
-		$this->pdf->Ln();
+		$this->pdf->Ln(6);
 		$this->pdf->setFontSize(11);
 		$this->pdf->Write(0,$person->strasse);
-		$this->pdf->Ln();
+		$this->pdf->Ln(6);
 		$this->pdf->Write(0,$person->plz. ' ' .$person->ort);
 		//if($person->zusatz)	$address[] = $person->zusatz;
 			
@@ -169,14 +165,20 @@ class PDF
 		{
 			$this->pdf->setFont('opensansb');
 			$this->pdf->Write(0,"Kinder");
-			$this->pdf->Ln();	
+			$this->pdf->Ln(6);	
+
+			$singleColumn = true;
+			if(count($person->children)>3){
+				$singleColumn = false;
+			}
+
+			$firstColumn = ceil(count($person->children)/2);
 		
 			$this->pdf->setFont('opensans');
-			usort($person->children,function($a,$b){return $a->age > $b->age;});
+			usort($person->children,function($a,$b){return $a->age < $b->age;});
 			foreach($person->children as $child){
-				
-				$this->pdf->Write(5,$child->vorname . ' ('.$child->birthday->format("d.m.Y").')');
-				$this->pdf->Ln();
+				$this->pdf->Write(5,$child->vorname.' ('.$child->birthday->format("d.m.Y").')');
+				$this->pdf->Ln(6);
 			}
 		}
 
@@ -184,7 +186,7 @@ class PDF
 		$alphabet = range('A', 'Z');
 		
 		for ($i = 0; $i < count($alphabet); $i++) {
-			$height = ($i * 4.5) + 5;
+			$height = ($i * 4.7) + 8;
 			$this->pdf->SetXY(100,$height);
 			if ($alphabet[$i] === substr($person->name, 0, 1)) {
 				$this->pdf->setFillColor(0,0,0,0);
@@ -201,7 +203,8 @@ class PDF
 
 		$this->pdf->setFillColor(99,70,24,7);
 		$this->pdf->setTextColor(0,0,0,0);
-		$this->pdf->MultiCell($w=111,$h=24,'Stand: ',$border=0,$align='C',$fill='dedede',$ln=1,$x=0,$y=130);
+		$this->pdf->setFontSize(12);
+		$this->pdf->MultiCell($w=111,$h=18,'',$border=0,$align='R',$fill='dedede',$ln=1,$x=0,$y=136);
 
 	}
 
@@ -209,5 +212,17 @@ class PDF
 	{
 
 		$this->pdf->Output(BASEDIR.'/output/test.pdf', 'F');
+	}
+
+	public function writeLnWIcon($text, $icon='')
+	{
+		if($text){
+			$this->pdf->setFontSize(11);
+			$this->pdf->setFont('opensans');
+			$this->pdf->ImageSVG(BASEDIR.'/assets/svg/'.$icon.'.svg', $x=11, $y=$this->pdf->getY(), $w=3, $h=5);
+			$this->pdf->setX(15);
+			$this->pdf->Write(5,$text);
+			$this->pdf->Ln(6);
+		}
 	}
 }
