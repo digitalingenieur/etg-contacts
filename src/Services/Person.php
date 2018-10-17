@@ -56,6 +56,9 @@ class Person
 				
 				$this->sex = ($value == 1)? 'm' : 'w';
 			}
+			if($key== 'geburtsdatum'){
+				$this->birthday = new \DateTime($value);
+			}
 			$this->{"$key"} = $value;
 		}
 	}
@@ -147,4 +150,6 @@ class Person
 			}
 		}
 	}
+
+
 }

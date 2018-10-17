@@ -214,6 +214,6 @@ class CreateAddressBook extends Command
 
         $pdf->output();
 
-        $output->writeln("Finish. PDF file written to PATH");
+        $output->writeln("Finish. PDF file written to ".$pdf->getOutputPath());
     }
 }
