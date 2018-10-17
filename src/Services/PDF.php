@@ -14,7 +14,7 @@ class PDF
 
 	private $footer = false;
 
-	private $outputPath = BASEDIR.'/output/test.pdf';
+	private $outputPath = BASEDIR.'/output/test1.pdf';
 
 	public function __construct()
 	{
@@ -121,8 +121,13 @@ class PDF
 		$this->pdf->setFont('opensans');
 		$this->pdf->Write(0,$person->strasse);
 		$this->pdf->Ln(6);
+		if($person->zusatz)
+		{
+			$this->pdf->Write(0, $person->zusatz);
+			$this->pdf->Ln(6);
+		}	
 		$this->pdf->Write(0,$person->plz. ' ' .$person->ort);
-		if($person->zusatz)	$this->pdf->Write(0, $person->zusatz);
+		
 			
 		$this->pdf->Ln(10);
 		
