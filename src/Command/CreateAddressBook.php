@@ -206,6 +206,8 @@ class CreateAddressBook extends Command
             }
         );
 
+        $pdf->addTitlePage();
+
         foreach($objPersons as $pid=>$person)
         {
             //$output->writeln("(".$person->p_id.") ".$person->name.", ".$person->vorname." (Geschlecht: $person->sex / $person->type)");

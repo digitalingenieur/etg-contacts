@@ -14,7 +14,7 @@ class PDF
 
 	private $footer = false;
 
-	private $outputPath = BASEDIR.'/output/test1.pdf';
+	private $outputPath = BASEDIR.'/output/2018-01.pdf';
 
 	public function __construct()
 	{
@@ -156,6 +156,36 @@ class PDF
 		}*/		
 	}
 
+	public function addTitlePage(){
+		$this->pdf->setMargins($this->getLeftMargin(),10,10,true);
+		$this->pdf->addPage();
+		
+		$this->pdf->setTextColorArray($this->colorPalette[0]);
+		$this->pdf->setFontSize(36);
+		$this->pdf->setFont('opensansb');
+		$this->pdf->Write(0,"Adressbuch");
+		$this->pdf->Ln(18);
+
+		$this->pdf->setFontSize(9);
+		$this->pdf->setCellHeightRatio(1.444444);
+		$this->pdf->setFont('opensans');
+		$this->pdf->Write(0,"Dieses Gemeindeadressbuch ist zum Austausch innerhalb der ETG Scheppach bestimmt. Durch deine Zugehörigkeit zur ETG erhältst du dieses Exemplar des Adressbuches.\n\nBitte nutze die Daten ausschließlich für den Zweck der Kontaktaufnahme bezüglich Angelegenheiten der ETG Scheppach.\n\nDie Veröffentlichung, die Weitergabe oder die Vervielfältigung dieser Daten ist untersagt.\n\nFalls du Fragen zum Adressbuch oder eine Änderung der Daten hast, wende dich bitte an Siegfried Heer.\n\nDie mit einem Stern (*) markierten Personen sind Mitglieder der Gemeinde.\n\n");
+
+		$this->pdf->setFillColor(0,0,0,20);
+		$this->pdf->setTextColorArray($this->colorPalette[0]); 
+		$this->pdf->MultiCell($w=111,$h=40,'',$border=0,$align='R',$fill='dedede',$ln=1,$x=0,$y=116);
+		$this->pdf->ImageSVG(BASEDIR.'/assets/svg/logo-etg.svg',21.5, 125, $w=45, $h=8);
+		$this->pdf->setY(135);
+		$this->pdf->Write(0,"Rappacher Str. 24\n74626 Bretzfeld-Scheppach");
+		
+
+		$this->pdf->addPage();
+		$date = new \DateTime();
+		$this->pdf->setY(132);
+		$this->pdf->setTextColorArray($this->colorPalette[0]); 
+		$this->pdf->Write(0,"Stand: ".$date->format('d.m.Y'));
+	}
+
 	public function output()
 	{
 		$this->pdf->Output($this->outputPath, 'F');
@@ -213,7 +243,7 @@ class PDF
 		}
 		else
 		{
-			$leftMargin = 10;
+			$leftMargin = 25;
 		}
 		return $leftMargin;
 	}
@@ -222,10 +252,16 @@ class PDF
 	{
 		$registry = '';
 		$alphabet = range('A', 'Z');
+
+		$addToMarginLeft = -10;
+		if($this->pdf->getPage()%2)
+		{
+			$addToMarginLeft = 70; 
+		}
 		
 		for ($i = 0; $i < count($alphabet); $i++) {
 			$height = ($i * 4.7) + 10;
-			$this->pdf->SetXY($this->pdf->getMargins()['left']+70,$height);
+			$this->pdf->SetXY($this->pdf->getMargins()['left']+$addToMarginLeft,$height);
 			if ($alphabet[$i] === substr($name, 0, 1)) {
 				$this->pdf->setFont('opensansb');
 				$this->pdf->setTextColorArray($this->colorPalette[1]);
