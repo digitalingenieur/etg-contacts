@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Dotenv\Dotenv;
 use App\Services\Person; 
 use App\Services\Page; 
@@ -34,6 +35,7 @@ class CreateAddressBook extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $pdf = new PDF();
+        $fileSystem = new Filesystem();
 
         $dotenv = new Dotenv();
         $dotenv->load(BASEDIR.'/.env');
@@ -212,6 +214,8 @@ class CreateAddressBook extends Command
         {
             //$output->writeln("(".$person->p_id.") ".$person->name.", ".$person->vorname." (Geschlecht: $person->sex / $person->type)");
             $pdf->addPage($person);
+
+            $fileSystem->appendToFile('output/PageList.csv', "$person->name;$person->vorname\n");
         }  
 
         $pdf->output();
