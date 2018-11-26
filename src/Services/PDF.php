@@ -219,7 +219,7 @@ class PDF
 		{
 			$this->pdf->setFontSize(9);
 			$this->pdf->setFont('opensans');
-			$this->pdf->Write(7.5,' ('.$person->birthday->format('d.m.').')');
+			$this->pdf->Write(8.5,' ('.$person->birthday->format('d.m.Y').')');
 		}
 
 		$this->pdf->Ln(8);
